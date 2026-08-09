@@ -35,7 +35,7 @@ export default defineConfig(({ mode }) => {
       }),
     ],
     server: {
-      https: true,
+      https: false,
       host: 'localhost',
     },
     ssr: {

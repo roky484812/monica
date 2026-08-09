@@ -292,21 +292,21 @@ This document breaks down the backend assignment into small, manageable tasks or
 
 ### Task 6.7: Implement Job Failure Handling
 
-- [ ] Override `failed()` method
-- [ ] Update status to 'failed'
-- [ ] Record system-level failure message
-- [ ] Set `completed_at` timestamp
-- [ ] Log failure details
-- [ ] Save import job record
+- [x] Override `failed()` method
+- [x] Update status to 'failed'
+- [x] Record system-level failure message
+- [x] Set `completed_at` timestamp
+- [x] Log failure details
+- [x] Save import job record
 
 ### Task 6.8: Implement Retry Safety Mechanism
 
-- [ ] Add unique constraint or tracking mechanism for processed rows
-- [ ] Implement idempotency check before creating contact
-- [ ] Use database transactions for row processing
-- [ ] Track last successfully processed row number
-- [ ] On retry, skip already processed rows
-- [ ] Document retry strategy in code comments
+- [x] Add unique constraint or tracking mechanism for processed rows (added last_processed_row column)
+- [x] Implement idempotency check before creating contact (check duplicate by first_name + last_name)
+- [x] Use database transactions for row processing (DB::transaction wraps each row)
+- [x] Track last successfully processed row number (updated after each row)
+- [x] On retry, skip already processed rows (resume from last_processed_row)
+- [x] Document retry strategy in code comments (comprehensive documentation added)
 
 ---
 

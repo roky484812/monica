@@ -36,6 +36,7 @@ class ImportJob extends Model
         'total_rows',
         'processed_rows',
         'failed_rows',
+        'last_processed_row',
         'status',
         'failure_message',
         'started_at',
@@ -51,6 +52,7 @@ class ImportJob extends Model
         'total_rows' => 'integer',
         'processed_rows' => 'integer',
         'failed_rows' => 'integer',
+        'last_processed_row' => 'integer',
         'started_at' => 'datetime',
         'completed_at' => 'datetime',
     ];

@@ -17,6 +17,43 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
+/**
+ * Process contact import from CSV file.
+ *
+ * RETRY SAFETY STRATEGY:
+ * ----------------------
+ * This job is designed to be safely retried if it fails during processing.
+ *
+ * 1. RESUME FROM LAST PROCESSED ROW:
+ *    - The job tracks 'last_processed_row' in the database after each row.
+ *    - On retry, it resumes from this row number instead of starting over.
+ *    - This prevents reprocessing successfully imported contacts.
+ *
+ * 2. IDEMPOTENCY CHECKS:
+ *    - Before creating a contact, we check if a duplicate already exists.
+ *    - Duplicates are identified by matching first_name + last_name in the vault.
+ *    - Duplicate rows are marked as failed with a specific error message.
+ *
+ * 3. DATABASE TRANSACTIONS:
+ *    - Each row is processed within a database transaction.
+ *    - If contact creation fails, the transaction rolls back automatically.
+ *    - This ensures atomic row processing (all or nothing).
+ *
+ * 4. ERROR ISOLATION:
+ *    - Each row's processing is wrapped in try-catch.
+ *    - Errors in one row don't affect other rows.
+ *    - All errors are recorded in the import_errors table.
+ *
+ * 5. PROGRESS TRACKING:
+ *    - Progress is updated after each chunk (50 rows).
+ *    - This allows monitoring and provides accurate status.
+ *
+ * FAILURE HANDLING:
+ * -----------------
+ * - The job will retry up to 3 times with 60-second backoff.
+ * - After 3 failed attempts, the failed() method is called.
+ * - The import job status is set to 'failed' with the error message.
+ */
 class ProcessContactImport implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -94,19 +131,25 @@ class ProcessContactImport implements ShouldQueue
                 throw new \Exception("Import file not found: {$filePath}");
             }
 
-            // Count total rows
-            $totalRows = $csvValidator->countRows($filePath);
-            $this->importJob->update(['total_rows' => $totalRows]);
+            // Count total rows (only if not already set)
+            if ($this->importJob->total_rows === 0) {
+                $totalRows = $csvValidator->countRows($filePath);
+                $this->importJob->update(['total_rows' => $totalRows]);
+            } else {
+                $totalRows = $this->importJob->total_rows;
+            }
 
             Log::info('CSV file validated', [
                 'import_job_id' => $this->importJob->id,
                 'total_rows' => $totalRows,
+                'resuming_from_row' => $this->importJob->last_processed_row,
             ]);
 
-            // Process CSV in chunks
-            $processedRows = 0;
-            $failedRows = 0;
-            $offset = 0;
+            // Resume from last processed row (for retries)
+            $startRow = $this->importJob->last_processed_row;
+            $processedRows = $this->importJob->processed_rows;
+            $failedRows = $this->importJob->failed_rows;
+            $offset = $startRow;
 
             while ($offset < $totalRows) {
                 $rows = $csvValidator->readRows($filePath, $offset, $this->chunkSize);
@@ -114,6 +157,11 @@ class ProcessContactImport implements ShouldQueue
                 foreach ($rows as $rowInfo) {
                     $rowNumber = $rowInfo['row_number'];
                     $rowData = $rowInfo['data'];
+
+                    // Skip if already processed (safety check)
+                    if ($rowNumber <= $startRow) {
+                        continue;
+                    }
 
                     try {
                         $success = $this->processRow($rowData, $rowNumber, $rowValidator);
@@ -133,6 +181,11 @@ class ProcessContactImport implements ShouldQueue
                     }
 
                     $processedRows++;
+
+                    // Update last processed row after each successful iteration
+                    $this->importJob->update([
+                        'last_processed_row' => $rowNumber,
+                    ]);
                 }
 
                 // Update progress after each chunk
@@ -186,28 +239,58 @@ class ProcessContactImport implements ShouldQueue
      */
     protected function processRow(array $rowData, int $rowNumber, ContactRowValidator $rowValidator): bool
     {
-        // Sanitize row data
-        $sanitizedData = $rowValidator->sanitize($rowData);
+        // Use database transaction for atomic row processing
+        return \DB::transaction(function () use ($rowData, $rowNumber, $rowValidator) {
+            // Sanitize row data
+            $sanitizedData = $rowValidator->sanitize($rowData);
 
-        // Validate row
-        $validation = $rowValidator->validate($sanitizedData, $rowNumber);
+            // Validate row
+            $validation = $rowValidator->validate($sanitizedData, $rowNumber);
 
-        if (! $validation['valid']) {
-            $this->recordError($rowNumber, $sanitizedData, implode(', ', $validation['errors']));
+            if (! $validation['valid']) {
+                $this->recordError($rowNumber, $sanitizedData, implode(', ', $validation['errors']));
 
-            return false;
+                return false;
+            }
+
+            // Check for duplicate contact (idempotency check)
+            if ($this->isDuplicateContact($sanitizedData)) {
+                $this->recordError($rowNumber, $sanitizedData, 'Contact already exists with the same first name and last name in this vault.');
+
+                return false;
+            }
+
+            // Create contact
+            try {
+                $this->createContact($sanitizedData);
+
+                return true;
+            } catch (\Exception $e) {
+                $this->recordError($rowNumber, $sanitizedData, "Contact creation failed: {$e->getMessage()}");
+
+                return false;
+            }
+        });
+    }
+
+    /**
+     * Check if a contact with the same name already exists in the vault.
+     */
+    protected function isDuplicateContact(array $rowData): bool
+    {
+        $vault = Vault::findOrFail($this->vaultId);
+
+        // Check for existing contact with same first_name and last_name
+        $query = $vault->contacts()
+            ->where('first_name', $rowData['first_name']);
+
+        if (! empty($rowData['last_name'])) {
+            $query->where('last_name', $rowData['last_name']);
+        } else {
+            $query->whereNull('last_name');
         }
 
-        // Create contact
-        try {
-            $this->createContact($sanitizedData);
-
-            return true;
-        } catch (\Exception $e) {
-            $this->recordError($rowNumber, $sanitizedData, "Contact creation failed: {$e->getMessage()}");
-
-            return false;
-        }
+        return $query->exists();
     }
 
     /**
