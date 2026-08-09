@@ -203,4 +203,14 @@ class Account extends Model
     {
         return $this->hasMany(Religion::class);
     }
+
+    /**
+     * Get the import jobs associated with the account.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\ImportJob, $this>
+     */
+    public function importJobs(): HasMany
+    {
+        return $this->hasMany(ImportJob::class);
+    }
 }

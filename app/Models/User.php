@@ -292,6 +292,16 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
     }
 
     /**
+     * Get the import jobs initiated by this user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\ImportJob, $this>
+     */
+    public function importJobs(): HasMany
+    {
+        return $this->hasMany(ImportJob::class);
+    }
+
+    /**
      * Get the preferred locale of the entity.
      *
      * @return string|null
