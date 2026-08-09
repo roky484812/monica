@@ -2,6 +2,7 @@
 
 use App\Domains\Settings\ManageUsers\Api\Controllers\UserController;
 use App\Domains\Vault\ManageVault\Api\Controllers\VaultController;
+use App\Http\Controllers\Api\ImportController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,4 +23,9 @@ Route::middleware('auth:sanctum')->name('api.')->group(function () {
 
     // vaults
     Route::apiResource('vaults', VaultController::class);
+
+    // imports
+    Route::post('imports', [ImportController::class, 'store'])->name('imports.store');
+    Route::get('imports/{id}', [ImportController::class, 'show'])->name('imports.show');
+    Route::get('imports/{id}/errors', [ImportController::class, 'errors'])->name('imports.errors');
 });
