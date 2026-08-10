@@ -109,7 +109,7 @@
       "composer install --no-progress --no-interaction --prefer-dist --optimize-autoloader",
       "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
       "@php -r \"touch('monica.db');\"",
-      "@php -r \"$env = file_get_contents('.env'); $dbPath = realpath('monica.db'); $env = preg_replace('/^DB_CONNECTION=.*/m', 'DB_CONNECTION=sqlite', $env); $env = preg_replace('/^DB_DATABASE=.*/m', 'DB_DATABASE=' . $dbPath, $env); file_put_contents('.env', $env);\"",
+      "@php scripts/setup-sqlite.php",
       "yarn install --frozen-lockfile",
       "@php artisan key:generate --ansi",
       "@php artisan monica:setup --force -vvv",
