@@ -313,6 +313,7 @@ class ProcessContactImport implements ShouldQueue
             'last_name' => $rowData['last_name'] ?? null,
             'middle_name' => $rowData['middle_name'] ?? null,
             'nickname' => $rowData['nickname'] ?? null,
+            'listed' => true,
         ]);
 
         // TODO: Add email and phone number after contact creation

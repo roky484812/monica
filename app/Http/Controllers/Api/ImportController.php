@@ -115,15 +115,19 @@ class ImportController extends Controller
     {
         $user = Auth::user();
 
-        // Find import job
-        $importJob = ImportJob::where('id', $id)
-            ->where('account_id', $user->account_id)
-            ->first();
+        // Find import job by ID.
+        $importJob = ImportJob::find($id);
 
         if (! $importJob) {
             return response()->json([
                 'message' => 'Import job not found.',
             ], 404);
+        }
+
+        if ($importJob->account_id !== $user->account_id) {
+            return response()->json([
+                'message' => 'You are not authorized to view this import job.',
+            ], 403);
         }
 
         return response()->json([
@@ -139,14 +143,18 @@ class ImportController extends Controller
         $user = Auth::user();
 
         // Find import job
-        $importJob = ImportJob::where('id', $id)
-            ->where('account_id', $user->account_id)
-            ->first();
+        $importJob = ImportJob::find($id);
 
         if (! $importJob) {
             return response()->json([
                 'message' => 'Import job not found.',
             ], 404);
+        }
+
+        if ($importJob->account_id !== $user->account_id) {
+            return response()->json([
+                'message' => 'You are not authorized to view this import job.',
+            ], 403);
         }
 
         // Get errors with pagination

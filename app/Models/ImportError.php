@@ -12,11 +12,14 @@ class ImportError extends Model
     use HasFactory, HasUuids;
 
     /**
-     * Indicates if the model should be timestamped.
-     *
-     * @var bool
+     * The name of the "created at" column.
      */
-    public $timestamps = false;
+    public const CREATED_AT = 'created_at';
+
+    /**
+     * Disable the updated_at timestamp.
+     */
+    public const UPDATED_AT = null;
 
     /**
      * The attributes that are mass assignable.

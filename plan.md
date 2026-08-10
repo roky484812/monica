@@ -17,7 +17,7 @@ This document breaks down the backend assignment into small, manageable tasks or
 - [x] Fork the Monica repository from https://github.com/monicahq/monica
 - [x] Clone the forked repository to local machine
 - [x] Create a new branch named `envobyte-assignment`
-- [ ] Push the branch to remote repository (will do after implementation)
+- [x] Push the branch to remote repository (completed after implementation)
 
 ### Task 0.2: Local Development Environment
 
@@ -34,7 +34,7 @@ This document breaks down the backend assignment into small, manageable tasks or
 ### Task 0.3: Queue Configuration
 
 - [x] Configure queue driver in `.env` (database or redis) - Currently using 'sync', will configure for database
-- [ ] Run queue migration if using database driver (will do in Phase 2)
+- [x] Run queue migration if using database driver (completed in Phase 2)
 - [x] Test queue worker runs (`php artisan queue:work`)
 - [x] Configure queue connection settings
 
@@ -207,7 +207,7 @@ This document breaks down the backend assignment into small, manageable tasks or
 - [x] Add method to retrieve file from storage
 - [x] Add method to delete file from storage
 - [x] Add file validation logic (CSV only, max size)
-- [ ] Add unit tests for file service (deferred to testing phase)
+- [x] Add unit tests for file service
 
 ---
 
@@ -220,7 +220,7 @@ This document breaks down the backend assignment into small, manageable tasks or
 - [x] Add method to count total rows in CSV
 - [x] Add method to validate CSV headers
 - [x] Handle different CSV encodings (UTF-8, etc.)
-- [ ] Add unit tests for CSV validation (deferred to testing phase)
+- [x] Add unit tests for CSV validation
 
 ### Task 5.2: Create Contact Row Validator
 
@@ -230,7 +230,7 @@ This document breaks down the backend assignment into small, manageable tasks or
 - [x] Add validation rules for phone (optional, valid format)
 - [x] Add validation for other contact fields
 - [x] Return detailed error messages for each field
-- [ ] Add unit tests for row validation (deferred to testing phase)
+- [x] Add unit tests for row validation
 
 ---
 
@@ -412,111 +412,116 @@ This document breaks down the backend assignment into small, manageable tasks or
 
 ---
 
-## Phase 10: Testing - Background Processing
+## Phase 10: Testing - Background Processing ✅ COMPLETED
 
 ### Task 10.1: Create Background Processing Test
 
-- [ ] Generate test: `php artisan make:test ContactImportProcessingTest`
-- [ ] Use RefreshDatabase trait
-- [ ] Create test: valid CSV rows create contacts
-- [ ] Create test: processed_rows is updated correctly
-- [ ] Create test: total_rows is set correctly
-- [ ] Create test: status changes to 'processing' then 'completed'
-- [ ] Create test: completed_at timestamp is set
+- [x] Generate test: `php artisan make:test ContactImportProcessingTest`
+- [x] Use RefreshDatabase trait
+- [x] Create test: valid CSV rows create contacts
+- [x] Create test: processed_rows is updated correctly
+- [x] Create test: total_rows is set correctly
+- [x] Create test: status changes to 'processing' then 'completed'
+- [x] Create test: completed_at timestamp is set
 
 ### Task 10.2: Test Chunk Processing
 
-- [ ] Create test CSV with more than 50 rows
-- [ ] Verify all rows are processed
-- [ ] Verify processed_rows updates incrementally
-- [ ] Verify memory usage stays reasonable
+- [x] Create test CSV with more than 50 rows
+- [x] Verify all rows are processed
+- [x] Verify processed_rows updates incrementally
+- [x] Verify memory usage stays reasonable
 
 ### Task 10.3: Test Contact Creation Integration
 
-- [ ] Verify contacts appear in database
-- [ ] Verify contacts belong to correct account
-- [ ] Verify contacts have correct user_id
-- [ ] Verify all contact fields are saved correctly
+- [x] Verify contacts appear in database
+- [x] Verify contacts belong to correct account
+- [x] Verify contacts have correct user_id
+- [x] Verify all contact fields are saved correctly
 
 ---
 
-## Phase 11: Testing - Error Isolation
+## Phase 11: Testing - Error Isolation ✅ COMPLETED
 
 ### Task 11.1: Create Error Isolation Test
 
-- [ ] Generate test: `php artisan make:test ImportErrorIsolationTest`
-- [ ] Use RefreshDatabase trait
-- [ ] Create CSV with mix of valid and invalid rows
-- [ ] Create test: invalid row is recorded in import_errors
-- [ ] Create test: error contains row_number
-- [ ] Create test: error contains error_message
-- [ ] Create test: error contains row_data
+- [x] Generate test: `php artisan make:test ImportErrorIsolationTest`
+- [x] Use RefreshDatabase trait
+- [x] Create CSV with mix of valid and invalid rows
+- [x] Create test: invalid row is recorded in import_errors
+- [x] Create test: error contains row_number
+- [x] Create test: error contains error_message
+- [x] Create test: error contains row_data
 
 ### Task 11.2: Test Continued Processing After Error
 
-- [ ] Create CSV with invalid row in middle
-- [ ] Verify rows before error are processed
-- [ ] Verify rows after error are processed
-- [ ] Verify failed_rows count is correct
-- [ ] Verify processed_rows includes failed rows
+- [x] Create CSV with invalid row in middle
+- [x] Verify rows before error are processed
+- [x] Verify rows after error are processed
+- [x] Verify failed_rows count is correct
+- [x] Verify processed_rows includes failed rows
 
 ### Task 11.3: Test Various Validation Failures
 
-- [ ] Test missing required name field
-- [ ] Test invalid email format
-- [ ] Test invalid phone format
-- [ ] Test unsupported field values
-- [ ] Verify each produces appropriate error message
+- [x] Test missing required name field
+- [x] Test invalid email format
+- [x] Test invalid phone format
+- [x] Test unsupported field values
+- [x] Verify each produces appropriate error message
 
 ### Task 11.4: Test Import Status with Partial Failures
 
-- [ ] Create CSV with some invalid rows
-- [ ] Verify status is 'completed' (not 'failed')
-- [ ] Verify failed_rows and processed_rows are correct
-- [ ] Test import with all invalid rows sets status to 'failed'
+- [x] Create CSV with some invalid rows
+- [x] Verify status is 'completed' (not 'failed')
+- [x] Verify failed_rows and processed_rows are correct
+- [x] Test import with all invalid rows sets status to 'failed'
 
 ---
 
-## Phase 12: Testing - Retry Safety
+## Phase 12: Testing - Retry Safety ✅ COMPLETED
 
 ### Task 12.1: Create Retry Safety Test
 
-- [ ] Generate test: `php artisan make:test ImportRetryTest`
-- [ ] Use RefreshDatabase trait
-- [ ] Create import job with partial progress
-- [ ] Simulate job retry
-- [ ] Verify contacts are not duplicated
-- [ ] Verify processed_rows remains accurate
+- [x] Generate test: `php artisan make:test ImportRetryTest`
+- [x] Use RefreshDatabase trait
+- [x] Create import job with partial progress
+- [x] Simulate job retry
+- [x] Verify contacts are not duplicated
+- [x] Verify processed_rows remains accurate
 
 ### Task 12.2: Test Transaction Rollback Scenario
 
-- [ ] Simulate failure after contact creation
-- [ ] Verify transaction rollback prevents partial state
-- [ ] Verify retry can process row successfully
-- [ ] Document behavior in test comments
+- [x] Simulate failure after contact creation
+- [x] Verify transaction rollback prevents partial state
+- [x] Verify retry can process row successfully
+- [x] Document behavior in test comments
 
 ### Task 12.3: Document Retry Strategy
 
-- [ ] Add comments in test explaining retry mechanism
-- [ ] Document what happens on crash
-- [ ] Document how duplicates are prevented
-- [ ] Document any remaining limitations
+- [x] Add comments in test explaining retry mechanism
+- [x] Document what happens on crash
+- [x] Document how duplicates are prevented
+- [x] Document any remaining limitations
 
 ---
 
-## Phase 13: Progress Tracking Tests
+## Phase 13: Progress Tracking Tests ✅ COMPLETED
 
 ### Task 13.1: Create Progress Tracking Test
 
-- [ ] Generate test: `php artisan make:test ImportProgressTest`
-- [ ] Use RefreshDatabase trait
-- [ ] Create test: progress endpoint requires authentication
-- [ ] Create test: user can only view own account's imports
-- [ ] Create test: progress_pct is calculated correctly
-- [ ] Create test: returns 404 for non-existent import
-- [ ] Create test: returns 403 for unauthorized access
+- [x] Generate test: `php artisan make:test ImportProgressTest`
+- [x] Use RefreshDatabase trait
+- [x] Create test: progress endpoint requires authentication
+- [x] Create test: user can only view own account's imports
+- [x] Create test: progress_pct is calculated correctly
+- [x] Create test: returns 404 for non-existent import
+- [x] Create test: returns 403 for unauthorized access
 
 ### Task 13.2: Test Progress During Processing
+
+- [x] Create test: progress endpoint reports processing status
+- [x] Create test: progress_pct is accurate while import is in progress
+- [x] Create test: total_rows, processed_rows, and failed_rows are returned
+- [x] Create test: import progress can be retrieved during processing
 
 - [ ] Create import with partial progress
 - [ ] Call progress endpoint

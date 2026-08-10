@@ -17,7 +17,7 @@ return new class extends Migration
             $table->integer('row_number');
             $table->json('row_data');
             $table->text('error_message');
-            $table->timestamp('created_at');
+            $table->timestamp('created_at')->useCurrent();
 
             $table->foreign('import_job_id')->references('id')->on('import_jobs')->onDelete('cascade');
 
