@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\Vault;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ImportRetryTest extends TestCase
@@ -48,7 +49,7 @@ class ImportRetryTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function retry_does_not_duplicate_contacts(): void
     {
         $csvPath = $this->storeCsv("first_name,last_name\nAlice,Smith\nBob,Jones\n");
@@ -71,7 +72,7 @@ class ImportRetryTest extends TestCase
         $this->assertEquals(2, $contactCount);
     }
 
-    /** @test */
+    #[Test]
     public function retry_updates_processed_rows_without_duplicates(): void
     {
         $csvPath = $this->storeCsv("first_name,last_name\nAlice,Smith\nBob,Jones\n");

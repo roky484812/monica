@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\Vault;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ImportProgressTest extends TestCase
@@ -47,7 +48,7 @@ class ImportProgressTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function progress_endpoint_requires_authentication(): void
     {
         $response = $this->getJson('/api/imports/00000000-0000-0000-0000-000000000000');
@@ -55,7 +56,7 @@ class ImportProgressTest extends TestCase
         $response->assertStatus(401);
     }
 
-    /** @test */
+    #[Test]
     public function user_can_view_their_own_import_progress(): void
     {
         $csvPath = $this->storeCsv("first_name,last_name\nAlice,Smith\n");
@@ -77,7 +78,7 @@ class ImportProgressTest extends TestCase
             ]);
     }
 
-    /** @test */
+    #[Test]
     public function progress_endpoint_returns_404_for_missing_import(): void
     {
         $response = $this->actingAs($this->user)
@@ -86,7 +87,7 @@ class ImportProgressTest extends TestCase
         $response->assertStatus(404);
     }
 
-    /** @test */
+    #[Test]
     public function user_cannot_view_import_from_other_account(): void
     {
         $otherAccount = Account::factory()->create();
@@ -100,7 +101,7 @@ class ImportProgressTest extends TestCase
         $response->assertStatus(403);
     }
 
-    /** @test */
+    #[Test]
     public function progress_endpoint_returns_current_processing_state(): void
     {
         $csvPath = $this->storeCsv("first_name,last_name\nAlice,Smith\nBob,Jones\n");
@@ -126,7 +127,7 @@ class ImportProgressTest extends TestCase
             ]);
     }
 
-    /** @test */
+    #[Test]
     public function progress_pct_is_calculated_correctly(): void
     {
         $csvPath = $this->storeCsv("first_name,last_name\nAlice,Smith\nBob,Jones\n");

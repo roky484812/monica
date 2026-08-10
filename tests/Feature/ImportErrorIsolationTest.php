@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\Vault;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ImportErrorIsolationTest extends TestCase
@@ -48,7 +49,7 @@ class ImportErrorIsolationTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function invalid_rows_are_recorded_and_processing_continues(): void
     {
         $csvPath = $this->storeCsv("first_name,last_name,email\n,Smith,invalid@example.com\nAlice,Johnson,alice@example.com\n");

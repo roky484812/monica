@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\Vault;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 /**
@@ -59,7 +60,7 @@ class ContactImportProcessingTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function valid_csv_rows_create_contacts(): void
     {
         $csvPath = $this->storeCsv("first_name,last_name,email\nAlice,Smith,alice@example.com\nBob,Jones,bob@example.com\n");
@@ -81,7 +82,7 @@ class ContactImportProcessingTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function processed_rows_is_updated_correctly(): void
     {
         $csvPath = $this->storeCsv("first_name,last_name\nAlice,Smith\nBob,Jones\nCarol,White\n");
@@ -95,7 +96,7 @@ class ContactImportProcessingTest extends TestCase
         $this->assertEquals(3, $importJob->processed_rows);
     }
 
-    /** @test */
+    #[Test]
     public function total_rows_is_set_correctly(): void
     {
         $csvPath = $this->storeCsv("first_name,last_name\nAlice,Smith\nBob,Jones\n");
@@ -110,7 +111,7 @@ class ContactImportProcessingTest extends TestCase
         $this->assertEquals(2, $importJob->total_rows);
     }
 
-    /** @test */
+    #[Test]
     public function status_changes_to_processing_then_completed(): void
     {
         $csvPath = $this->storeCsv("first_name,last_name\nAlice,Smith\n");
@@ -126,7 +127,7 @@ class ContactImportProcessingTest extends TestCase
         $this->assertEquals(ImportJob::STATUS_COMPLETED, $importJob->status);
     }
 
-    /** @test */
+    #[Test]
     public function completed_at_timestamp_is_set(): void
     {
         $csvPath = $this->storeCsv("first_name,last_name\nAlice,Smith\n");
@@ -142,7 +143,7 @@ class ContactImportProcessingTest extends TestCase
         $this->assertNotNull($importJob->completed_at);
     }
 
-    /** @test */
+    #[Test]
     public function started_at_timestamp_is_set(): void
     {
         $csvPath = $this->storeCsv("first_name,last_name\nAlice,Smith\n");
@@ -158,7 +159,7 @@ class ContactImportProcessingTest extends TestCase
         $this->assertNotNull($importJob->started_at);
     }
 
-    /** @test */
+    #[Test]
     public function all_rows_processed_in_large_csv_exceeding_chunk_size(): void
     {
         // Generate 60 rows (more than the 50-row chunk size)
@@ -186,7 +187,7 @@ class ContactImportProcessingTest extends TestCase
             ->count());
     }
 
-    /** @test */
+    #[Test]
     public function contacts_belong_to_correct_account_and_vault(): void
     {
         $csvPath = $this->storeCsv("first_name,last_name\nAlice,Smith\n");
@@ -205,7 +206,7 @@ class ContactImportProcessingTest extends TestCase
         $this->assertEquals($this->account->id, $this->vault->account_id);
     }
 
-    /** @test */
+    #[Test]
     public function contacts_have_correct_field_values(): void
     {
         $csvPath = $this->storeCsv("first_name,last_name,middle_name,nickname\nAlice,Smith,Marie,Ally\n");
