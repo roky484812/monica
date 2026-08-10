@@ -38,7 +38,16 @@ class ImportController extends Controller
         // Verify vault belongs to user's account
         $vault = Vault::where('id', $vaultId)
             ->where('account_id', $user->account_id)
-            ->firstOrFail();
+            ->first();
+
+        if (! $vault) {
+            return response()->json([
+                'message' => 'The given data was invalid.',
+                'errors' => [
+                    'vault_id' => ['The selected vault is invalid.'],
+                ],
+            ], 422);
+        }
 
         // Verify user has access to the vault
         if (! $vault->users()->where('user_id', $user->id)->exists()) {
@@ -70,6 +79,7 @@ class ImportController extends Controller
             $importJob = ImportJob::create([
                 'account_id' => $user->account_id,
                 'user_id' => $user->id,
+                'vault_id' => $vaultId,
                 'filename' => $fileInfo['filename'],
                 'file_path' => $fileInfo['file_path'],
                 'total_rows' => 0, // Will be updated by the job

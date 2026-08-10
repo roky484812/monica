@@ -66,6 +66,11 @@ class ImportInitiationTest extends TestCase
                 'vault_id' => $this->vault->id,
             ]);
 
+        // Debug: print response if it fails
+        if ($response->status() !== 201) {
+            dump($response->json());
+        }
+
         $response->assertStatus(201)
             ->assertJsonStructure([
                 'data' => [

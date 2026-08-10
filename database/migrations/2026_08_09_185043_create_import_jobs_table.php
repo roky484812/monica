@@ -12,7 +12,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('import_jobs', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->uuid('account_id');
             $table->uuid('user_id');
             $table->string('filename');

@@ -31,6 +31,7 @@ class ImportJob extends Model
     protected $fillable = [
         'account_id',
         'user_id',
+        'vault_id',
         'filename',
         'file_path',
         'total_rows',
@@ -71,6 +72,14 @@ class ImportJob extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get the vault where contacts will be imported.
+     */
+    public function vault(): BelongsTo
+    {
+        return $this->belongsTo(Vault::class);
     }
 
     /**

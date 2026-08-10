@@ -82,12 +82,12 @@ class ProcessContactImport implements ShouldQueue
     /**
      * The import job instance.
      */
-    protected ImportJob $importJob;
+    public ImportJob $importJob;
 
     /**
      * The vault to import contacts into.
      */
-    protected string $vaultId;
+    public string $vaultId;
 
     /**
      * Chunk size for processing rows.
