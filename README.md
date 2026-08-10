@@ -672,6 +672,29 @@ A healthy import system requires visibility across four dimensions: **performanc
 
 ## Test Instructions
 
+### Interactive Testing via Web UI
+
+**Access the API documentation:**
+
+Navigate to `http://localhost:8000/docs#contact-import` to view and test the import endpoints interactively.
+
+**Login requirement:**
+
+Before testing the import endpoints, you must authenticate:
+
+1. Navigate to `http://localhost:8000/login`
+2. Log in with your Monica credentials (or register a new account if needed)
+3. Once logged in, return to `http://localhost:8000/docs#contact-import`
+4. The interactive API documentation will use your session authentication automatically
+
+**Testing the import flow:**
+
+1. Prepare a CSV file following the format described in the [CSV File Format](#csv-file-format) section
+2. Use the **POST /api/imports** endpoint to upload your file
+3. Copy the `id` from the response
+4. Monitor progress with **GET /api/imports/{id}**
+5. View any errors with **GET /api/imports/{id}/errors**
+
 ### Configure Test Environment
 
 The test suite uses an in-memory SQLite database configured in `phpunit.xml`:
