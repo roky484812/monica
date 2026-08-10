@@ -11,6 +11,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ImportInitiationTest extends TestCase
@@ -53,7 +54,7 @@ class ImportInitiationTest extends TestCase
         Storage::fake('imports');
     }
 
-    /** @test */
+    #[Test]
     public function authenticated_user_can_upload_csv()
     {
         Queue::fake();
@@ -97,7 +98,7 @@ class ImportInitiationTest extends TestCase
         Queue::assertPushed(ProcessContactImport::class);
     }
 
-    /** @test */
+    #[Test]
     public function unauthenticated_user_receives_401()
     {
         $csv = $this->createValidCsv();
@@ -110,7 +111,7 @@ class ImportInitiationTest extends TestCase
         $response->assertStatus(401);
     }
 
-    /** @test */
+    #[Test]
     public function non_csv_file_is_rejected()
     {
         $file = UploadedFile::fake()->create('document.pdf', 100, 'application/pdf');
@@ -125,7 +126,7 @@ class ImportInitiationTest extends TestCase
             ->assertJsonValidationErrors('file');
     }
 
-    /** @test */
+    #[Test]
     public function oversized_file_is_rejected()
     {
         // Create file larger than 10MB
@@ -141,7 +142,7 @@ class ImportInitiationTest extends TestCase
             ->assertJsonValidationErrors('file');
     }
 
-    /** @test */
+    #[Test]
     public function import_requires_vault_id()
     {
         $csv = $this->createValidCsv();
@@ -155,7 +156,7 @@ class ImportInitiationTest extends TestCase
             ->assertJsonValidationErrors('vault_id');
     }
 
-    /** @test */
+    #[Test]
     public function user_cannot_import_to_vault_from_different_account()
     {
         $otherAccount = Account::factory()->create();
@@ -175,7 +176,7 @@ class ImportInitiationTest extends TestCase
             ->assertJsonValidationErrors('vault_id');
     }
 
-    /** @test */
+    #[Test]
     public function import_record_is_created_in_database()
     {
         Queue::fake();
@@ -200,7 +201,7 @@ class ImportInitiationTest extends TestCase
         $this->assertStringContainsString('.csv', $importJob->filename);
     }
 
-    /** @test */
+    #[Test]
     public function job_is_dispatched_to_queue()
     {
         Queue::fake();
@@ -218,7 +219,7 @@ class ImportInitiationTest extends TestCase
         });
     }
 
-    /** @test */
+    #[Test]
     public function response_has_correct_structure()
     {
         Queue::fake();
