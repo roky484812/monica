@@ -33,7 +33,7 @@ For macOS users, [Laravel Valet](https://laravel.com/docs/valet) is recommended.
 **Step 1 — Clone the repository and switch to the assignment branch:**
 
 ```bash
-git clone https://github.com/YOUR-USERNAME/monica.git
+git clone git@github.com:roky484812/monica.git
 cd monica
 git checkout envobyte-assignment
 ```
