@@ -100,6 +100,20 @@
     "post-update-cmd": [
       "Illuminate\\Foundation\\ComposerScripts::postUpdate",
       "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+    ],
+    "dev": [
+      "Composer\\Config::disableProcessTimeout",
+      "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --queue=high,low,default --tries=1 --timeout=0\" \"yarn run dev\" --names=server,queue,logs,vite --kill-others"
+    ],
+    "setup": [
+      "composer install --no-progress --no-interaction --prefer-dist --optimize-autoloader",
+      "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
+      "@php -r \"touch('monica.db');\"",
+      "@php -r \"$env = file_get_contents('.env'); $dbPath = realpath('monica.db'); $env = preg_replace('/^DB_CONNECTION=.*/m', 'DB_CONNECTION=sqlite', $env); $env = preg_replace('/^DB_DATABASE=.*/m', 'DB_DATABASE=' . $dbPath, $env); file_put_contents('.env', $env);\"",
+      "yarn install --frozen-lockfile",
+      "@php artisan key:generate --ansi",
+      "@php artisan monica:setup --force -vvv",
+      "yarn run build"
     ]
   },
   "config": {

@@ -27,6 +27,7 @@
     "ant-design-vue": "^4.2.6",
     "axios": "^1.11.0",
     "charts.css": "^1.2.0",
+    "concurrently": "^10.0.4",
     "eslint": "^9.33.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-vue": "^10.4.0",

@@ -64,7 +64,16 @@ Jane,Smith,,,jane@example.com,
 
 ### Installation
 
-1. **Clone the repository and switch to the assignment branch:**
+1. **Prerequisites:**
+   - PHP 8.3 or newer
+   - HTTP server with PHP support (e.g., Apache, Nginx, Caddy)
+   - Composer
+   - Node.js and Yarn
+   - SQLite or MySQL
+
+   For macOS users, [Laravel Valet](https://laravel.com/docs/valet) is recommended.
+
+2. **Clone the repository and switch to the assignment branch:**
 
 ```bash
 git clone https://github.com/YOUR-USERNAME/monica.git
@@ -72,20 +81,28 @@ cd monica
 git checkout envobyte-assignment
 ```
 
-2. **Install PHP dependencies:**
+3. **One-Command Setup:**
 
 ```bash
-composer install
+composer setup
 ```
 
-3. **Environment configuration:**
+This single command will automatically:
 
-```bash
-cp .env.example .env
-php artisan key:generate
-```
+- Install all PHP dependencies
+- Create `.env` file from `.env.example`
+- Create SQLite database (`monica.db`)
+- **Configure `.env` to use SQLite with absolute path**
+- Install JavaScript dependencies with Yarn
+- Generate application key
+- Run migrations and setup initial data
+- Build front-end assets
 
-4. **Configure database in `.env`:**
+**That's it!** The database is automatically configured for SQLite. No manual `.env` editing required.
+
+4. **Optional - Switch to MySQL:**
+
+If you prefer MySQL over SQLite, edit `.env` after setup:
 
 ```env
 DB_CONNECTION=mysql
@@ -96,43 +113,41 @@ DB_USERNAME=your_username
 DB_PASSWORD=your_password
 ```
 
-5. **Configure queue driver in `.env`:**
+Then run:
 
-For production or testing with actual queue workers:
-
-```env
-QUEUE_CONNECTION=database
+```bash
+php artisan migrate:fresh
 ```
 
-For quick testing (synchronous execution):
+5. **Configure queue driver (optional):**
+
+By default, the queue uses the database driver. For synchronous execution during testing:
 
 ```env
 QUEUE_CONNECTION=sync
 ```
 
-6. **Run database migrations:**
+6. **Optional - Generate dummy data:**
 
 ```bash
-php artisan migrate
+php artisan monica:dummy --force -vvv
 ```
 
-7. **Create storage symlink:**
+7. **Start the development environment:**
 
 ```bash
-php artisan storage:link
+composer dev
 ```
 
-8. **Start the application:**
+This starts all three required services:
 
-```bash
-php artisan serve
-```
+- **Laravel development server** on `http://127.0.0.1:8000`
+- **Queue worker** for background job processing
+- **Vite dev server** for hot module reloading
 
-9. **Start the queue worker (if using database queue):**
+Press `Ctrl+C` to stop all services.
 
-```bash
-php artisan queue:work --verbose
-```
+For more details, see the [official setup documentation](https://docs.monicahq.com/developers/setup-local-development).
 
 ### Testing Setup
 
