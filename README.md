@@ -136,6 +136,19 @@ Jane,Smith,,,jane@example.com,
 | `email`       | No       | valid email, max 255 characters |
 | `phone`       | No       | string, max 255 characters      |
 
+### Sample CSV Files
+
+Ready-to-use test files are provided in the `.contact-csv-files` directory at the project root:
+
+| File                            | Rows | Purpose                                                                                   |
+| ------------------------------- | ---- | ----------------------------------------------------------------------------------------- |
+| `test_contacts_500.csv`         | 500  | Medium dataset — good for general end-to-end testing                                      |
+| `test_contacts_2000.csv`        | 2000 | Large dataset — tests chunked processing and progress tracking                            |
+| `test_contacts_large.csv`       | 111  | Varied data — useful for checking field coverage                                          |
+| `test_contacts_with_errors.csv` | 30   | Contains intentionally invalid rows — tests error isolation and `import_errors` recording |
+
+Use any of these files with the **POST `/api/imports`** endpoint to test the import flow without preparing your own data.
+
 ---
 
 ## Existing-Flow Analysis
