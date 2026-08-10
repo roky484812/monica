@@ -103,6 +103,20 @@ QUEUE_CONNECTION=sync
 php artisan monica:dummy --force -vvv
 ```
 
+This creates two pre-seeded accounts for immediate testing:
+
+```
+An account with a lot of data:
+  username: admin@admin.com
+  password: admin123
+
+A blank account:
+  username: blank@blank.com
+  password: blank123
+
+URL: http://localhost:8000
+```
+
 For more details, see the [official setup documentation](https://docs.monicahq.com/developers/setup-local-development).
 
 ### CSV File Format
@@ -680,10 +694,30 @@ Navigate to `http://localhost:8000/docs#contact-import` to view and test the imp
 
 **Login requirement:**
 
-Before testing the import endpoints, you must authenticate:
+Before testing the import endpoints, you must authenticate. If you have not already done so, generate dummy data first:
+
+```bash
+php artisan monica:dummy --force -vvv
+```
+
+This creates two ready-to-use accounts:
+
+```
+An account with a lot of data:
+  username: admin@admin.com
+  password: admin123
+
+A blank account:
+  username: blank@blank.com
+  password: blank123
+
+URL: http://localhost:8000
+```
+
+Then:
 
 1. Navigate to `http://localhost:8000/login`
-2. Log in with your Monica credentials (or register a new account if needed)
+2. Log in with one of the credentials above (or register a new account if needed)
 3. Once logged in, return to `http://localhost:8000/docs#contact-import`
 4. The interactive API documentation will use your session authentication automatically
 
