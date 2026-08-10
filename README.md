@@ -687,13 +687,51 @@ Before testing the import endpoints, you must authenticate:
 3. Once logged in, return to `http://localhost:8000/docs#contact-import`
 4. The interactive API documentation will use your session authentication automatically
 
+**Prepare test data:**
+
+Sample CSV files are provided in the `.contact-csv-files` directory at the project root. You can use these files to test the import functionality without creating your own.
+
+**Get or create a vault ID:**
+
+Before importing contacts, you need a `vault_id`:
+
+- **Option 1:** Use an existing vault — navigate to your Monica dashboard and find a vault ID from the URL or vault settings
+- **Option 2:** Create a new vault through the Monica web interface at `http://localhost:8000/vaults`
+
+The `vault_id` determines where imported contacts will be stored.
+
 **Testing the import flow:**
 
-1. Prepare a CSV file following the format described in the [CSV File Format](#csv-file-format) section
-2. Use the **POST /api/imports** endpoint to upload your file
-3. Copy the `id` from the response
-4. Monitor progress with **GET /api/imports/{id}**
-5. View any errors with **GET /api/imports/{id}/errors**
+1. Choose a CSV file from `.contact-csv-files` directory (or prepare your own following the [CSV File Format](#csv-file-format))
+2. Use the **POST /api/imports** endpoint to upload your file:
+   - Attach the CSV file
+   - Provide your `vault_id`
+3. **Copy the `id` from the response** — this is your import job ID, required for all subsequent status checks
+4. Monitor progress with **GET /api/imports/{id}** (use the ID from step 3)
+5. View any errors with **GET /api/imports/{id}/errors** (use the same ID)
+
+**Example response from POST /api/imports:**
+
+```json
+{
+  "message": "Import started successfully.",
+  "data": {
+    "id": "9d2e1f12-3456-7890-abcd-ef1234567890",  ← Copy this ID
+    "filename": "contacts.csv",
+    "total_rows": 100,
+    "processed_rows": 0,
+    "failed_rows": 0,
+    "status": "pending",
+    "progress_pct": 0,
+    "started_at": null,
+    "completed_at": null,
+    "created_at": "2026-08-10T07:30:00.000000Z",
+    "updated_at": "2026-08-10T07:30:00.000000Z"
+  }
+}
+```
+
+Use the `id` value (`9d2e1f12-3456-7890-abcd-ef1234567890` in this example) for checking status and errors.
 
 ### Configure Test Environment
 
